@@ -1,5 +1,3 @@
-package org.jfrog.example;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jfrog.artifactory.client.Artifactory;
