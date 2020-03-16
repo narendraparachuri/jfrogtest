@@ -66,7 +66,7 @@ public class ClientExample {
      * Search a specific repository, return the location of all the files
      */
     private static List<RepoPath> searchFile(Artifactory artifactory, String repoName) {
-        if (artifactory == null || StringUtils.isEmpty(repoName) || StringUtils.isEmpty(fileToSearch)){
+        if (artifactory == null || StringUtils.isEmpty(repoName)){
             throw new IllegalArgumentException("Arguments passed to serachFile are not valid");
         }
 
