@@ -29,11 +29,7 @@ public class ClientExample {
     private static String password = "dcrKak7j9D";
     private static String artifactoryUrl = "http://jfrog.local/artifactory";
 
-    private static String repoName = "artifactory_find";
-    private static String fileNameToUpload = "ex_upload_1.txt";
-    private static String fileUploadToLocation = "ex_fold1/ex_upload_1.txt";
-    private static String fileDownloadToLocation = "ex_download_1.txt";
-
+    private static String repoName = "gradle-release-local";
 
     public static void main(String[] args) throws Exception {
 
@@ -44,14 +40,8 @@ public class ClientExample {
             throw new RuntimeException("artifactory creation failed");
         }
 
-        //create repository
-        String repositoryCreationResult = createNewRepository(artifactory, repoName);
-
-        //create and upload a file
-        File uploadedFile = uploadFile(artifactory, repoName, fileUploadToLocation, fileNameToUpload);
-
         //search for file
-        List<RepoPath> searchResult = searchFile(artifactory, repoName, fileNameToUpload);
+        List<RepoPath> searchResult = searchFile(artifactory, repoName);
         
         System.out.print("Example finished.");
     }
@@ -73,61 +63,15 @@ public class ClientExample {
     }
 
     /**
-     * This method checks whether repository with supplied name exists or not, and creates new if required.
+     * Search a specific repository, return the location of all the files
      */
-    private static String createNewRepository(Artifactory artifactory, String repoName) {
-        if (artifactory == null || StringUtils.isEmpty(repoName)){
-            throw new IllegalArgumentException("Arguments passed to createNewRepository are not valid");
-        }
-
-        List<LightweightRepository> repoList = artifactory.repositories().list(LOCAL);
-        Set<String> repoNamesList = repoList.stream()
-                .map(LightweightRepository::getKey)
-                .collect(Collectors.toSet());
-
-        String creationResult = null;
-        if ( repoNamesList != null && !(repoNamesList.contains(repoName)) ){
-            GenericRepositorySettingsImpl settings = new GenericRepositorySettingsImpl();
-            Repository repository = artifactory.repositories()
-                    .builders()
-                    .localRepositoryBuilder()
-                    .key(repoName)
-                    .description("new example local repository")
-                    .repositorySettings(settings)
-                    .build();
-            creationResult = artifactory.repositories().create(1, repository);
-        }
-
-        return creationResult;
-    }
-
-    /**
-     * This method receives the uploaded file source and destination, performs the upload to artifactory
-     */
-    private static File uploadFile(Artifactory artifactory, String repo, String destPath, String fileNameToUpload) throws IOException {
-        if (StringUtils.isEmpty(repo) || StringUtils.isEmpty(destPath) || StringUtils.isEmpty(fileNameToUpload) || artifactory == null){
-            throw new IllegalArgumentException("Arguments passed to createArtifactory are not valid");
-        }
-
-        Path path = Paths.get(fileNameToUpload);
-        Files.write(path, Collections.singleton("This is an example line"), Charset.forName("UTF-8"));
-
-        java.io.File file = new java.io.File(fileNameToUpload);
-
-        return artifactory.repository(repo).upload(destPath, file).doUpload();
-    }
-
-    /**
-     * Search for file by name in a specific repository, return the location of file
-     */
-    private static List<RepoPath> searchFile(Artifactory artifactory, String repoName, String fileToSearch) {
+    private static List<RepoPath> searchFile(Artifactory artifactory, String repoName) {
         if (artifactory == null || StringUtils.isEmpty(repoName) || StringUtils.isEmpty(fileToSearch)){
             throw new IllegalArgumentException("Arguments passed to serachFile are not valid");
         }
 
         return artifactory.searches()
                 .repositories(repoName)
-                .artifactsByName(fileToSearch)
                 .doSearch();
     }
 }
