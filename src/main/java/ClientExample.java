@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 import static org.jfrog.artifactory.client.model.impl.RepositoryTypeImpl.LOCAL;
 
-public class artifactsearch {
+public class ClientExample {
 
     private static String userName = "admin";
     private static String password = "dcrKak7j9D";
